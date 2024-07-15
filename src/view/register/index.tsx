@@ -64,7 +64,7 @@ const RegisterView = () => {
       if (files) {
         form.append("file", files);
       }
-      const { data } = await instance.post("/auth/register", form, {
+      const { data } = await instance().post("/auth/register", form, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert(data?.message);

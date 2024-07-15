@@ -6,7 +6,7 @@ import { Box, Button, Typography, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
-import { signOut } from "@/lib/features/auth/authSlice";
+import { logout } from "@/_middlewares/auth.middleware";
 
 const NavbarWrapper = styled(Box)(() => ({
   minHeight: "100%",
@@ -58,8 +58,8 @@ const Navbar = () => {
           ) : (
             <Button
               variant="outlined"
-              onClick={() => {
-                dispatch(signOut());
+              onClick={async () => {
+                await logout()(dispatch);
                 router.push("/");
               }}
             >

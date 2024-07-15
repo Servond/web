@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { Box, Container, Typography, Stack } from "@mui/material";
 import { withFormik } from "formik";
 import * as Yup from "yup";
-
 import { useAppDispatch } from "@/lib/hooks";
-import { signIn } from "@/lib/features/auth/authSlice";
 
+import { login } from "@/_middlewares/auth.middleware";
 import { FormValues, FormProps } from "./types";
 
 import PageWrapper from "../global/components/pageWrapper";
@@ -22,8 +21,8 @@ const LoginSchema = Yup.object().shape({
 });
 
 const LoginView = () => {
-  const router = useRouter();
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const LoginForm = withFormik<FormProps, FormValues>({
     mapPropsToValues: (props) => ({
@@ -32,10 +31,14 @@ const LoginView = () => {
     }),
     validationSchema: LoginSchema,
     enableReinitialize: true,
-    handleSubmit({ email, password }: FormValues, { resetForm }) {
-      dispatch(signIn({ email, password }));
-      resetForm();
-      router.push("/");
+    async handleSubmit({ email, password }: FormValues, { resetForm }) {
+      try {
+        await login({ email, password })(dispatch);
+        resetForm();
+        router.push("/");
+      } catch (err: any) {
+        console.error(err.message);
+      }
     },
   })(InnerForm);
 
